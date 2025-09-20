@@ -1,9 +1,9 @@
 import React, { useState, useCallback } from "react";
 import "./App.css";
 import MotorBoat from "./components/MotorBoat";
+import TopBoat from "./components/TopBoat";
 
 function App() {
-  const [topRotation, setTopRotation] = useState(0);
   const [bottomRotation, setBottomRotation] = useState(0);
   const [activeTriangle, setActiveTriangle] = useState<'top' | 'bottom' | 'boat-top' | 'boat-bottom' | null>(null);
   const [startAngle, setStartAngle] = useState(0);
@@ -29,23 +29,18 @@ function App() {
     return angle;
   }, []);
 
-  const handleDragStart = useCallback((element: 'top' | 'bottom' | 'boat-top' | 'boat-bottom') => (event: React.MouseEvent | React.TouchEvent) => {
+  const handleDragStart = useCallback((element: 'bottom' | 'boat-bottom') => (event: React.MouseEvent | React.TouchEvent) => {
     event.preventDefault();
     event.stopPropagation();
     setActiveTriangle(element);
     const angle = calculateAngle(event);
-    const isTop = element === 'top' || element === 'boat-top';
-    setStartAngle(angle - (isTop ? topRotation : bottomRotation));
-  }, [calculateAngle, topRotation, bottomRotation]);
+    setStartAngle(angle - bottomRotation);
+  }, [calculateAngle, bottomRotation]);
 
   const handleDragMove = useCallback((event: React.MouseEvent | React.TouchEvent) => {
-    if (!activeTriangle) return;
+    if (!activeTriangle || activeTriangle === 'top') return;
     const angle = calculateAngle(event);
-    if (activeTriangle === 'top' || activeTriangle === 'boat-top') {
-      setTopRotation(angle - startAngle);
-    } else {
-      setBottomRotation(angle - startAngle);
-    }
+    setBottomRotation(angle - startAngle);
   }, [activeTriangle, startAngle, calculateAngle]);
 
   const handleDragEnd = useCallback(() => {
@@ -72,19 +67,10 @@ function App() {
           stroke="black"
           strokeWidth="2"
         />
-        <g 
-          transform={`rotate(${topRotation}, 50, 50)`}
-          onMouseDown={handleDragStart('top')}
-          onTouchStart={handleDragStart('top')}
-          style={{ cursor: activeTriangle === 'top' ? 'grabbing' : 'grab' }}
-          className="triangle-handle"
-        >
-          <path
-            d="M 50 15 L 55 5 L 45 5 Z"
-            fill="black"
-            stroke="none"
-          />
-        </g>
+        <TopBoat 
+          activeTriangle={activeTriangle}
+          onActiveTriangleChange={setActiveTriangle}
+        />
         <g 
           transform={`rotate(${bottomRotation + 180}, 50, 50)`}
           onMouseDown={handleDragStart('bottom')}
@@ -98,13 +84,6 @@ function App() {
             stroke="none"
           />
         </g>
-        {/* Top Boat */}
-        <MotorBoat
-          x={50 + 50 * Math.cos((topRotation - 90) * Math.PI / 180)}
-          y={50 + 50 * Math.sin((topRotation - 90) * Math.PI / 180)}
-          rotation={0}
-          onDragStart={handleDragStart('boat-top')}
-        />
         {/* Bottom Boat */}
         <MotorBoat
           x={50 + 50 * Math.cos((bottomRotation + 90) * Math.PI / 180)}
