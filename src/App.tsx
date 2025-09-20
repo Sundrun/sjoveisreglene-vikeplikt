@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import "./App.css";
-import Boat from "./components/Boat";
+import MotorBoat from "./components/MotorBoat";
 
 function App() {
   const [topRotation, setTopRotation] = useState(0);
@@ -99,14 +99,14 @@ function App() {
           />
         </g>
         {/* Top Boat */}
-        <Boat
+        <MotorBoat
           x={50 + 50 * Math.cos((topRotation - 90) * Math.PI / 180)}
           y={50 + 50 * Math.sin((topRotation - 90) * Math.PI / 180)}
           rotation={0}
           onDragStart={handleDragStart('boat-top')}
         />
         {/* Bottom Boat */}
-        <Boat
+        <MotorBoat
           x={50 + 50 * Math.cos((bottomRotation + 90) * Math.PI / 180)}
           y={50 + 50 * Math.sin((bottomRotation + 90) * Math.PI / 180)}
           rotation={0}
