@@ -102,14 +102,14 @@ function App() {
         <Boat
           x={50 + 50 * Math.cos((topRotation - 90) * Math.PI / 180)}
           y={50 + 50 * Math.sin((topRotation - 90) * Math.PI / 180)}
-          rotation={topRotation}
+          rotation={0}
           onDragStart={handleDragStart('boat-top')}
         />
         {/* Bottom Boat */}
         <Boat
           x={50 + 50 * Math.cos((bottomRotation + 90) * Math.PI / 180)}
           y={50 + 50 * Math.sin((bottomRotation + 90) * Math.PI / 180)}
-          rotation={bottomRotation + 180}
+          rotation={0}
           onDragStart={handleDragStart('boat-bottom')}
         />
       </svg>
