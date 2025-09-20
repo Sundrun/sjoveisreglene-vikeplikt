@@ -1,5 +1,5 @@
 import React from 'react';
-import { ReactComponent as BoatIcon } from '../assets/boat.svg';
+import { ReactComponent as BoatIcon } from '../assets/motorboat.svg';
 
 interface BoatProps {
   x: number;
@@ -17,7 +17,7 @@ const Boat: React.FC<BoatProps> = ({ x, y, rotation, onDragStart }) => {
       style={{ cursor: 'grab' }}
       className="boat-handle"
     >
-      <BoatIcon />
+      <BoatIcon width={30} height={30} />
     </g>
   );
 };
