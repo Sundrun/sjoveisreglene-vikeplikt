@@ -58,7 +58,7 @@ function App() {
         onTouchEnd={handleDragEnd}
         style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
       >
-        <g transform={`rotate(${rotation}, 50, 50)`}>
+        <g transform={`rotate(${rotation + 180}, 50, 50)`}>
           <circle
             cx="50"
             cy="50"
