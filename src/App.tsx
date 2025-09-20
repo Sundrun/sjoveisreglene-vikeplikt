@@ -68,7 +68,7 @@ function App() {
             strokeWidth="2"
           />
           <path
-            d="M 50 5 L 55 15 L 45 15 Z"
+            d="M 50 15 L 55 5 L 45 5 Z"
             fill="black"
             stroke="none"
           />
