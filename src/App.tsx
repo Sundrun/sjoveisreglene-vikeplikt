@@ -1,10 +1,11 @@
 import React, { useState, useCallback } from "react";
 import "./App.css";
+import Boat from "./components/Boat";
 
 function App() {
   const [topRotation, setTopRotation] = useState(0);
   const [bottomRotation, setBottomRotation] = useState(0);
-  const [activeTriangle, setActiveTriangle] = useState<'top' | 'bottom' | null>(null);
+  const [activeTriangle, setActiveTriangle] = useState<'top' | 'bottom' | 'boat-top' | 'boat-bottom' | null>(null);
   const [startAngle, setStartAngle] = useState(0);
 
   const calculateAngle = useCallback((event: React.MouseEvent | React.TouchEvent) => {
@@ -28,18 +29,19 @@ function App() {
     return angle;
   }, []);
 
-  const handleDragStart = useCallback((triangle: 'top' | 'bottom') => (event: React.MouseEvent | React.TouchEvent) => {
+  const handleDragStart = useCallback((element: 'top' | 'bottom' | 'boat-top' | 'boat-bottom') => (event: React.MouseEvent | React.TouchEvent) => {
     event.preventDefault();
     event.stopPropagation();
-    setActiveTriangle(triangle);
+    setActiveTriangle(element);
     const angle = calculateAngle(event);
-    setStartAngle(angle - (triangle === 'top' ? topRotation : bottomRotation));
+    const isTop = element === 'top' || element === 'boat-top';
+    setStartAngle(angle - (isTop ? topRotation : bottomRotation));
   }, [calculateAngle, topRotation, bottomRotation]);
 
   const handleDragMove = useCallback((event: React.MouseEvent | React.TouchEvent) => {
     if (!activeTriangle) return;
     const angle = calculateAngle(event);
-    if (activeTriangle === 'top') {
+    if (activeTriangle === 'top' || activeTriangle === 'boat-top') {
       setTopRotation(angle - startAngle);
     } else {
       setBottomRotation(angle - startAngle);
@@ -54,7 +56,7 @@ function App() {
     <main className="page">
       <svg
         className="svg-circle"
-        viewBox="0 0 100 100"
+        viewBox="-10 -10 120 120"
         preserveAspectRatio="xMidYMid meet"
         onMouseMove={handleDragMove}
         onMouseUp={handleDragEnd}
@@ -96,6 +98,20 @@ function App() {
             stroke="none"
           />
         </g>
+        {/* Top Boat */}
+        <Boat
+          x={50 + 50 * Math.cos((topRotation - 90) * Math.PI / 180)}
+          y={50 + 50 * Math.sin((topRotation - 90) * Math.PI / 180)}
+          rotation={topRotation}
+          onDragStart={handleDragStart('boat-top')}
+        />
+        {/* Bottom Boat */}
+        <Boat
+          x={50 + 50 * Math.cos((bottomRotation + 90) * Math.PI / 180)}
+          y={50 + 50 * Math.sin((bottomRotation + 90) * Math.PI / 180)}
+          rotation={bottomRotation + 180}
+          onDragStart={handleDragStart('boat-bottom')}
+        />
       </svg>
     </main>
   );
