@@ -25,3 +25,7 @@ html, body, #root {
   -ms-user-select: none;
   touch-action: none;
 }
+
+.triangle-handle {
+  pointer-events: all;
+}

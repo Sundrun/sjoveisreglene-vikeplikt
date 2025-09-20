@@ -2,17 +2,19 @@ import React, { useState, useCallback } from "react";
 import "./App.css";
 
 function App() {
-  const [rotation, setRotation] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
+  const [topRotation, setTopRotation] = useState(0);
+  const [bottomRotation, setBottomRotation] = useState(0);
+  const [activeTriangle, setActiveTriangle] = useState<'top' | 'bottom' | null>(null);
   const [startAngle, setStartAngle] = useState(0);
 
   const calculateAngle = useCallback((event: React.MouseEvent | React.TouchEvent) => {
-    const svgElement = (event.currentTarget as SVGSVGElement);
+    const svgElement = (event.currentTarget as SVGSVGElement).closest('svg');
+    if (!svgElement) return 0;
+    
     const rect = svgElement.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
     
-    // Get client coordinates based on event type
     let clientX, clientY;
     if ('touches' in event) {
       clientX = event.touches[0].clientX;
@@ -26,21 +28,26 @@ function App() {
     return angle;
   }, []);
 
-  const handleDragStart = useCallback((event: React.MouseEvent | React.TouchEvent) => {
+  const handleDragStart = useCallback((triangle: 'top' | 'bottom') => (event: React.MouseEvent | React.TouchEvent) => {
     event.preventDefault();
-    setIsDragging(true);
+    event.stopPropagation();
+    setActiveTriangle(triangle);
     const angle = calculateAngle(event);
-    setStartAngle(angle - rotation);
-  }, [rotation, calculateAngle]);
+    setStartAngle(angle - (triangle === 'top' ? topRotation : bottomRotation));
+  }, [calculateAngle, topRotation, bottomRotation]);
 
   const handleDragMove = useCallback((event: React.MouseEvent | React.TouchEvent) => {
-    if (!isDragging) return;
+    if (!activeTriangle) return;
     const angle = calculateAngle(event);
-    setRotation(angle - startAngle);
-  }, [isDragging, startAngle, calculateAngle]);
+    if (activeTriangle === 'top') {
+      setTopRotation(angle - startAngle);
+    } else {
+      setBottomRotation(angle - startAngle);
+    }
+  }, [activeTriangle, startAngle, calculateAngle]);
 
   const handleDragEnd = useCallback(() => {
-    setIsDragging(false);
+    setActiveTriangle(null);
   }, []);
 
   return (
@@ -49,24 +56,40 @@ function App() {
         className="svg-circle"
         viewBox="0 0 100 100"
         preserveAspectRatio="xMidYMid meet"
-        onMouseDown={handleDragStart}
         onMouseMove={handleDragMove}
         onMouseUp={handleDragEnd}
         onMouseLeave={handleDragEnd}
-        onTouchStart={handleDragStart}
         onTouchMove={handleDragMove}
         onTouchEnd={handleDragEnd}
-        style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
       >
-        <g transform={`rotate(${rotation + 180}, 50, 50)`}>
-          <circle
-            cx="50"
-            cy="50"
-            r="45"
-            fill="none"
-            stroke="black"
-            strokeWidth="2"
+        <circle
+          cx="50"
+          cy="50"
+          r="45"
+          fill="none"
+          stroke="black"
+          strokeWidth="2"
+        />
+        <g 
+          transform={`rotate(${topRotation}, 50, 50)`}
+          onMouseDown={handleDragStart('top')}
+          onTouchStart={handleDragStart('top')}
+          style={{ cursor: activeTriangle === 'top' ? 'grabbing' : 'grab' }}
+          className="triangle-handle"
+        >
+          <path
+            d="M 50 15 L 55 5 L 45 5 Z"
+            fill="black"
+            stroke="none"
           />
+        </g>
+        <g 
+          transform={`rotate(${bottomRotation + 180}, 50, 50)`}
+          onMouseDown={handleDragStart('bottom')}
+          onTouchStart={handleDragStart('bottom')}
+          style={{ cursor: activeTriangle === 'bottom' ? 'grabbing' : 'grab' }}
+          className="triangle-handle"
+        >
           <path
             d="M 50 15 L 55 5 L 45 5 Z"
             fill="black"
