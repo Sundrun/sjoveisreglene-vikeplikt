@@ -1,19 +1,19 @@
 import React from 'react';
 import DraggableBoat from './DraggableBoat';
 
-interface TopBoatProps {
+interface BottomBoatProps {
   activeTriangle: 'top' | 'bottom' | 'boat-top' | 'boat-bottom' | null;
   onActiveTriangleChange: (triangle: 'top' | 'bottom' | 'boat-top' | 'boat-bottom' | null) => void;
 }
 
-const TopBoat: React.FC<TopBoatProps> = ({ activeTriangle, onActiveTriangleChange }) => {
+const BottomBoat: React.FC<BottomBoatProps> = ({ activeTriangle, onActiveTriangleChange }) => {
   return (
     <DraggableBoat
-      position="top"
+      position="bottom"
       activeTriangle={activeTriangle}
       onActiveTriangleChange={onActiveTriangleChange}
     />
   );
 };
 
-export default TopBoat;
+export default BottomBoat;
