@@ -17,7 +17,7 @@ const Boat: React.FC<BoatProps> = ({ x, y, rotation, onDragStart }) => {
       style={{ cursor: 'grab' }}
       className="boat-handle"
     >
-      <BoatIcon width={30} height={30} />
+      <BoatIcon width={14} height={14} />
     </g>
   );
 };
